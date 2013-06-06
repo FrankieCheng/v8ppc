@@ -878,6 +878,7 @@ class Assembler : public AssemblerBase {
   void addic(Register dst, Register src, const Operand& imm);
 
   void andi(Register ra, Register rs, const Operand& imm);
+  void andis(Register ra, Register rs, const Operand& imm);
   void ori(Register dst, Register src, const Operand& imm);
   void oris(Register dst, Register src, const Operand& imm);
   void orx(Register dst, Register src1, Register src2, RCBit r = LeaveRC);
@@ -913,6 +914,7 @@ class Assembler : public AssemblerBase {
   void and_(Register dst, Register src1, Register src2, RCBit rc = LeaveRC);
 
   void xori(Register dst, Register src, const Operand& imm);
+  void xoris(Register ra, Register rs, const Operand& imm);
   void xor_(Register dst, Register src1, Register src2, RCBit rc = LeaveRC);
 
   void cntlzw_(Register dst, Register src, RCBit rc = LeaveRC);
