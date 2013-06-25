@@ -120,27 +120,23 @@ class CpuFeatures : public AllStatic {
 // Core register
 struct Register {
   static const int kNumRegisters = 32;
-  static const int kMaxNumAllocatableRegisters = 12;
+  static const int kMaxNumAllocatableRegisters = 9;  // r3-r12
   static const int kSizeInBytes = 4;
 
   inline static int NumAllocatableRegisters();
 
   static int ToAllocationIndex(Register reg) {
-    ASSERT(reg.code() < kMaxNumAllocatableRegisters);
-    return reg.code();
+    return reg.code() - 3;  // r0-r3 skipped
   }
 
   static Register FromAllocationIndex(int index) {
     ASSERT(index >= 0 && index < kMaxNumAllocatableRegisters);
-    return from_code(index);
+    return from_code(index + 3);  // r0-r3 are skipped
   }
 
   static const char* AllocationIndexToString(int index) {
     ASSERT(index >= 0 && index < kMaxNumAllocatableRegisters);
     const char* const names[] = {
-      "r0",
-      "r1",
-      "r2",
       "r3",
       "r4",
       "r5",
@@ -150,7 +146,7 @@ struct Register {
       "r9",
       "r10",
       "r11",
-      "r12",
+      "r12",  // currently last allocated register
       "r13",
       "r14",
       "r15",
@@ -169,7 +165,6 @@ struct Register {
       "r28",
       "r29",
       "r30",
-      "fp",
     };
     return names[index];
   }
@@ -804,6 +799,9 @@ class Assembler : public AssemblerBase {
   }
   void b(Condition cond, Label* L)  {
     switch (cond) {
+      case al:
+        b(L);
+        break;
       case eq:
         beq(L);
         break;

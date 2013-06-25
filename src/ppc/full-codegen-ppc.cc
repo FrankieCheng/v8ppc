@@ -371,7 +371,7 @@ void FullCodeGenerator::EmitBackEdgeBookkeeping(IterationStatement* stmt,
                  Max(1, distance / kBackEdgeDistanceUnit));
   }
   EmitProfilingCounterDecrement(weight);
-  __ b(pl, &ok);
+  __ bgt(&ok);
   InterruptStub stub;
   __ CallStub(&stub);
 

@@ -270,7 +270,7 @@ void HydrogenCodeStub::GenerateLightweightMiss(MacroAssembler* masm) {
     ASSERT(descriptor->register_param_count_ == 0 ||
            r3.is(descriptor->register_params_[param_count - 1]));
     // Push arguments
-    for (int i = 3; i < param_count; ++i) {
+    for (int i = 0; i < param_count; ++i) {
       __ push(descriptor->register_params_[i]);
     }
     ExternalReference miss = descriptor->miss_handler();

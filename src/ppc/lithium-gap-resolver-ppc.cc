@@ -36,7 +36,7 @@
 namespace v8 {
 namespace internal {
 
-static const Register kSavedValueRegister = { 9 };
+static const Register kSavedValueRegister = { 11 };
 
 LGapResolver::LGapResolver(LCodeGen* owner)
     : cgen_(owner), moves_(32, owner->zone()), root_index_(0), in_cycle_(false),
@@ -172,7 +172,7 @@ void LGapResolver::BreakCycle(int index) {
   if (source->IsRegister()) {
     __ mov(kSavedValueRegister, cgen_->ToRegister(source));
   } else if (source->IsStackSlot()) {
-    __ ldr(kSavedValueRegister, cgen_->ToMemOperand(source));
+    __ lwz(kSavedValueRegister, cgen_->ToMemOperand(source));
   } else if (source->IsDoubleRegister()) {
     __ vmov(kScratchDoubleReg, cgen_->ToDoubleRegister(source));
   } else if (source->IsDoubleStackSlot()) {
@@ -193,7 +193,7 @@ void LGapResolver::RestoreValue() {
   if (saved_destination_->IsRegister()) {
     __ mov(cgen_->ToRegister(saved_destination_), kSavedValueRegister);
   } else if (saved_destination_->IsStackSlot()) {
-    __ str(kSavedValueRegister, cgen_->ToMemOperand(saved_destination_));
+    __ stw(kSavedValueRegister, cgen_->ToMemOperand(saved_destination_));
   } else if (saved_destination_->IsDoubleRegister()) {
     __ vmov(cgen_->ToDoubleRegister(saved_destination_), kScratchDoubleReg);
   } else if (saved_destination_->IsDoubleStackSlot()) {
@@ -217,16 +217,16 @@ void LGapResolver::EmitMove(int index) {
   if (source->IsRegister()) {
     Register source_register = cgen_->ToRegister(source);
     if (destination->IsRegister()) {
-      __ mov(cgen_->ToRegister(destination), source_register);
+      __ mr(cgen_->ToRegister(destination), source_register);
     } else {
       ASSERT(destination->IsStackSlot());
-      __ str(source_register, cgen_->ToMemOperand(destination));
+      __ stw(source_register, cgen_->ToMemOperand(destination));
     }
 
   } else if (source->IsStackSlot()) {
     MemOperand source_operand = cgen_->ToMemOperand(source);
     if (destination->IsRegister()) {
-      __ ldr(cgen_->ToRegister(destination), source_operand);
+      __ lwz(cgen_->ToRegister(destination), source_operand);
     } else {
       ASSERT(destination->IsStackSlot());
       MemOperand destination_operand = cgen_->ToMemOperand(destination);
@@ -238,8 +238,8 @@ void LGapResolver::EmitMove(int index) {
           __ vldr(kScratchDoubleReg.low(), source_operand);
           __ vstr(kScratchDoubleReg.low(), destination_operand);
         } else {
-          __ ldr(ip, source_operand);
-          __ str(ip, destination_operand);
+          __ lwz(ip, source_operand);
+          __ stw(ip, destination_operand);
         }
       } else {
         __ ldr(kSavedValueRegister, source_operand);
@@ -296,10 +296,10 @@ void LGapResolver::EmitMove(int index) {
             cgen_->ToHighMemOperand(source);
         MemOperand destination_high_operand =
             cgen_->ToHighMemOperand(destination);
-        __ ldr(kSavedValueRegister, source_operand);
-        __ str(kSavedValueRegister, destination_operand);
-        __ ldr(kSavedValueRegister, source_high_operand);
-        __ str(kSavedValueRegister, destination_high_operand);
+        __ lwz(kSavedValueRegister, source_operand);
+        __ stw(kSavedValueRegister, destination_operand);
+        __ lwz(kSavedValueRegister, source_high_operand);
+        __ stw(kSavedValueRegister, destination_high_operand);
       } else {
         __ vldr(kScratchDoubleReg, source_operand);
         __ vstr(kScratchDoubleReg, destination_operand);
