@@ -40,9 +40,8 @@ namespace internal {
 const int kNumRegisters = 32;
 
 // FP support.
-const int kNumFPSingleRegisters = 32;
-const int kNumFPDoubleRegisters = 16;
-const int kNumFPRegisters = kNumFPSingleRegisters + kNumFPDoubleRegisters;
+const int kNumFPDoubleRegisters = 32;
+const int kNumFPRegisters = kNumFPDoubleRegisters;
 
 #if defined(INCLUDE_ARM)
 // Constant pool marker.

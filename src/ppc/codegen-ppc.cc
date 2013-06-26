@@ -618,7 +618,7 @@ static byte* GetNoCodeAgeSequence(uint32_t* length) {
     CodePatcher patcher(byte_sequence, kNoCodeAgeSequenceLength);
     PredictableCodeSizeScope scope(patcher.masm(), *length);
     patcher.masm()-> mflr(r0);
-    patcher.masm()-> MultiPush(r1.bit() | cp.bit() | fp.bit() | r0.bit());
+    patcher.masm()-> Push(r0, fp, cp, r4);
     // Load undefined value here, so the value is ready for the loop
     // below.
     patcher.masm()-> LoadRoot(ip, Heap::kUndefinedValueRootIndex);

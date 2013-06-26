@@ -1121,9 +1121,11 @@ void Assembler::neg(Register rt, Register ra, RCBit rc) {
   emit(EXT2 | NEGX| rt.code()*B21 | ra.code()*B16 | rc);
 }
 
+static int fake_count = 0;
 void Assembler::fake_asm(enum FAKE_OPCODE_T fopcode) {
   ASSERT(fopcode < fLastFaker);
-  emit(FAKE_OPCODE | fopcode);
+  fake_count++;
+  emit(FAKE_OPCODE | (fake_count << 8) | fopcode);
 }
 // end PowerPC
 
